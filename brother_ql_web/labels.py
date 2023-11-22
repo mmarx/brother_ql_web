@@ -3,7 +3,8 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from io import BytesIO
-from typing import cast, Literal
+# TODO: Remove `Tuple` after dropping Python 3.8.
+from typing import cast, Literal, Tuple
 
 from brother_ql import BrotherQLRaster, create_label
 from brother_ql.devicedependent import (
@@ -68,7 +69,7 @@ class LabelParameters:
         return self._scale_margin(self.margin_right)
 
     @property
-    def fill_color(self) -> tuple[int, int, int]:
+    def fill_color(self) -> Tuple[int, int, int]:
         return (255, 0, 0) if "red" in self.label_size else (0, 0, 0)
 
     @property
@@ -85,10 +86,10 @@ class LabelParameters:
         return path
 
     @property
-    def width_height(self) -> tuple[int, int]:
+    def width_height(self) -> Tuple[int, int]:
         try:
             width, height = cast(
-                tuple[int, int], label_type_specs[self.label_size]["dots_printable"]
+                Tuple[int, int], label_type_specs[self.label_size]["dots_printable"]
             )
         except KeyError:
             raise LookupError("Unknown label_size")
@@ -110,7 +111,7 @@ class LabelParameters:
 
 def _determine_image_dimensions(
     text: str, image_font: ImageFont.FreeTypeFont, parameters: LabelParameters
-) -> tuple[int, int, int, int]:
+) -> Tuple[int, int, int, int]:
     image = Image.new("L", (20, 20), "white")
     draw = ImageDraw.Draw(image)
 
@@ -142,7 +143,7 @@ def _determine_text_offsets(
     text_height: int,
     text_width: int,
     parameters: LabelParameters,
-) -> tuple[int, int]:
+) -> Tuple[int, int]:
     if parameters.orientation == "standard":
         if parameters.kind in (DIE_CUT_LABEL, ROUND_DIE_CUT_LABEL):
             vertical_offset = (height - text_height) // 2
