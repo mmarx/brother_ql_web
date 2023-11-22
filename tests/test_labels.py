@@ -1,4 +1,7 @@
-from importlib.resources import as_file, files
+try:
+    from importlib.resources import as_file, files
+except ImportError:
+    from importlib_resources import as_file, files  # type: ignore[import-not-found,no-redef]
 from tempfile import NamedTemporaryFile
 from unittest import mock
 

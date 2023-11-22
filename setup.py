@@ -27,6 +27,7 @@ setup(
             "black",
             "flake8",
             "pep8-naming",
+            'importlib-resources; python_version < "3.9"',
         ],
         "mypy": [
             "mypy",
