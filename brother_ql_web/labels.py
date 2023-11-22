@@ -26,8 +26,8 @@ del logging
 class LabelParameters:
     configuration: Configuration
 
-    font_family: str
-    font_style: str
+    font_family: str | None = None
+    font_style: str | None = None
     text: str = ""
     font_size: int = 100
     label_size: str = "62"
@@ -40,7 +40,9 @@ class LabelParameters:
     margin_left: int = 35
     margin_right: int = 35
     label_count: int = 1
-    high_quality: bool = True
+    # TODO: Not yet taken into account. The number of dots in each direction has to be
+    #       doubled. The generator/calculation methods have to be updated accordingly.
+    high_quality: bool = False
 
     @property
     def kind(self) -> FormFactor:
@@ -73,12 +75,13 @@ class LabelParameters:
     def font_path(self) -> str:
         try:
             if self.font_family is None or self.font_style is None:
+                assert self.configuration.label.default_font is not None
                 self.font_family = self.configuration.label.default_font.family
                 self.font_style = self.configuration.label.default_font.style
             fonts = utils.collect_fonts(self.configuration)
             path = fonts[self.font_family][self.font_style]
         except KeyError:
-            raise LookupError("Couln't find the font & style")
+            raise LookupError("Couldn't find the font & style")
         return path
 
     @property
@@ -209,13 +212,15 @@ def generate_label(
     if save_image_to:
         image.save(save_image_to)
 
-    red: bool = False
+    red: bool = "red" in parameters.label_size
     rotate: int | str = 0
     if parameters.kind == ENDLESS_LABEL:
         rotate = 0 if parameters.orientation == "standard" else 90
     elif parameters.kind in (ROUND_DIE_CUT_LABEL, DIE_CUT_LABEL):
         rotate = "auto"
-        red = "red" in parameters.label_size
+
+    if parameters.high_quality:
+        logger.warning("High quality mode is not implemented for now.")
 
     qlr = BrotherQLRaster(configuration.printer.model)
     create_label(
@@ -226,7 +231,7 @@ def generate_label(
         threshold=parameters.threshold,
         cut=True,
         rotate=rotate,
-        dpi_600=parameters.high_quality,
+        dpi_600=False,
     )
 
     return qlr
@@ -240,7 +245,7 @@ def print_label(
 ) -> None:
     backend = backend_class(configuration.printer.printer)
     for i in range(parameters.label_count):
-        logger.info("Printing label %d of %d ...", i, parameters.label_count)
+        logger.info("Printing label %d of %d ...", i + 1, parameters.label_count)
         backend.write(qlr.data)
     backend.dispose()
     del backend
