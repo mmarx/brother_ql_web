@@ -21,6 +21,7 @@ setup(
         "brother_ql",
         "bottle",
         "jinja2",
+        "Pillow>=8",
     ],
     extras_require={
         "dev": [
