@@ -3,8 +3,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from io import BytesIO
-# TODO: Remove `Tuple` after dropping Python 3.8.
-from typing import cast, Literal, Tuple
+from typing import cast, Literal, Tuple  # TODO: Remove `Tuple` after dropping Python 3.8.  # noqa: E501
 
 from brother_ql import BrotherQLRaster, create_label
 from brother_ql.devicedependent import (
