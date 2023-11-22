@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 try:
     from importlib.resources import as_file, files
 except ImportError:
