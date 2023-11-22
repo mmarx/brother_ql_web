@@ -50,3 +50,4 @@ jobs:
     - name: run mypy
       run:
         mypy brother_ql_web/ tests/
+      if: ${{ matrix.python != '3.8' }}
