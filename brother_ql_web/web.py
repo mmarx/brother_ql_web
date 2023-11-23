@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, cast, Tuple  # TODO: Remove `Tuple` after dropping Python 3.8.
 
 import bottle
 from brother_ql_web.configuration import Configuration
@@ -148,7 +148,7 @@ def print_text() -> dict[str, bool | str]:
 def main(
     configuration: Configuration,
     fonts: dict[str, dict[str, str]],
-    label_sizes: list[tuple[str, str]],
+    label_sizes: list[Tuple[str, str]],
     backend_class: BACKEND_TYPE,
 ) -> None:
     app = bottle.default_app()
