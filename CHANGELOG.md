@@ -1,5 +1,7 @@
 # Development version
 
+# Version 0.2.0 - 2023-11-23
+
 * Fix undefined variables introduced due to the migration.
 * Add tests.
 * Add type hints, including *mypy*.

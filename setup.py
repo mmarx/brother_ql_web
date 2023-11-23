@@ -8,13 +8,15 @@ ROOT_DIRECTORY = Path(__file__).parent.resolve()
 setup(
     name="brother_ql_web",
     description="Simple label designer API and web API for Brother QL label printers",
-    version="0.1.0",
+    version="0.2.0",
     license="GPL-3.0-only",
     long_description=(ROOT_DIRECTORY / "README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
     author="Philipp Klaus (initial), FriedrichFröbel",
     url="https://github.com/FriedrichFroebel/brother_ql_web/",
-    packages=find_namespace_packages(where=".", exclude=["tests", "tests.*"]),
+    packages=find_namespace_packages(
+        include=["brother_ql_web", "brother_ql_web.*"]
+    ),
     include_package_data=True,
     python_requires=">=3.8, <4",
     install_requires=[

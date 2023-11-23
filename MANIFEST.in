@@ -2,3 +2,5 @@ recursive-include brother_ql_web/static/css *
 recursive-include brother_ql_web/static/fonts *
 recursive-include brother_ql_web/static/js *
 recursive-include brother_ql_web/views *
+recursive-include tests/data *
+recursive-exclude venv *
