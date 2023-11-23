@@ -53,9 +53,6 @@ def labeldesigner() -> dict[str, Any]:
 
 
 def get_label_parameters(request: bottle.BaseRequest) -> LabelParameters:
-    """
-    Might raise LookupError()
-    """
     d = request.params.decode()  # UTF-8 decoded form data
 
     font_family = d.get("font_family").rpartition("(")[0].strip()
@@ -75,7 +72,7 @@ def get_label_parameters(request: bottle.BaseRequest) -> LabelParameters:
         "margin_left": int(d.get("margin_left", 35)),
         "margin_right": int(d.get("margin_right", 35)),
         "label_count": int(d.get("label_count", 1)),
-        "high_quality": bool(d.get("high_quality", True)),
+        "high_quality": bool(d.get("high_quality", False)),  # TODO: Enable by default.
         "configuration": request.app.config["brother_ql_web.configuration"],
     }
 
@@ -110,7 +107,7 @@ def print_text() -> dict[str, bool | str]:
 
     try:
         parameters = get_label_parameters(bottle.request)
-    except LookupError as e:
+    except (AttributeError, IndexError, LookupError) as e:
         return_dict["error"] = str(e)
         return return_dict
 

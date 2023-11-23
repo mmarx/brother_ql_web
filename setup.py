@@ -28,11 +28,13 @@ setup(
             "black",
             "flake8",
             "pep8-naming",
+            "requests",
             'importlib-resources; python_version < "3.9"',
         ],
         "mypy": [
             "mypy",
             "types-Pillow",
+            "types-requests",
         ],
     },
     entry_points={
