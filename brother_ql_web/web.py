@@ -53,7 +53,18 @@ def labeldesigner() -> dict[str, Any]:
 
 
 def get_label_parameters(request: bottle.BaseRequest) -> LabelParameters:
-    d = request.params.decode()  # UTF-8 decoded form data
+    # As we have strings, *bottle* would try to generate Latin-1 bytes from it
+    # before decoding it back to UTF-8. This seems to break some umlauts, thus
+    # resulting in UnicodeEncodeErrors being raised when going back to UTF-8.
+    # For now, we just state that we always receive clean UTF-8 data and thus
+    # the recode operations just can be omitted. All external API users are
+    # responsible for passing clean data.
+    # References:
+    #   * https://github.com/bottlepy/bottle/blob/99341ff3791b2e7e705d7373e71937e9018eb081/bottle.py#L2197-L2203  # noqa: E501
+    #   * https://github.com/FriedrichFroebel/brother_ql_web/issues/9
+    parameters = request.params
+    parameters.recode_unicode = False
+    d = parameters.decode()  # UTF-8 decoded form data
 
     font_family = d.get("font_family").rpartition("(")[0].strip()
     font_style = d.get("font_family").rpartition("(")[2].rstrip(")")

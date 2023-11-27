@@ -203,6 +203,35 @@ class GetPreviewImageTestCase(TestCase):
         with as_file(reference) as path:
             self.assertEqual(path.read_bytes(), response.content)
 
+    def test_special_characters(self) -> None:
+        self.run_server()
+        # Minimal copy from the Firefox developer tools.
+        headers = {
+            "Content-Type": "multipart/form-data; boundary=---------------------------381934621323024354152349680295"  # noqa: E501
+        }
+        body = """
+-----------------------------381934621323024354152349680295
+Content-Disposition: form-data; name="text"
+
+abcdefgö+ëŠ
+-----------------------------381934621323024354152349680295
+Content-Disposition: form-data; name="font_family"
+
+Roboto (Medium)
+-----------------------------381934621323024354152349680295
+Content-Disposition: form-data; name="label_size"
+
+62
+-----------------------------381934621323024354152349680295--
+""".encode()
+        response = requests.post(
+            "http://localhost:8013/api/preview/text?return_format=png",
+            data=body,
+            headers=headers,
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertLessEqual(14000, len(response.content))  # 14061 bytes
+
 
 class PrintTextTestCase(TestCase):
     def test_error(self) -> None:
