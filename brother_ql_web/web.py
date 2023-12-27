@@ -65,7 +65,7 @@ def _save_to_bytes(upload: bottle.FileUpload | None) -> bytes | None:
 
 
 def get_label_parameters(
-    request: bottle.BaseRequest, should_be_file: bool = False
+    request: bottle.BaseRequest, should_be_file: bool = False, recode: bool = False
 ) -> LabelParameters:
     # As we have strings, *bottle* would try to generate Latin-1 bytes from it
     # before decoding it back to UTF-8. This seems to break some umlauts, thus
@@ -77,7 +77,7 @@ def get_label_parameters(
     #   * https://github.com/bottlepy/bottle/blob/99341ff3791b2e7e705d7373e71937e9018eb081/bottle.py#L2197-L2203  # noqa: E501
     #   * https://github.com/FriedrichFroebel/brother_ql_web/issues/9
     parameters = request.params
-    parameters.recode_unicode = False
+    parameters.recode_unicode = recode
     d = parameters.decode()  # UTF-8 decoded form data
 
     try:
@@ -113,6 +113,14 @@ def get_label_parameters(
         "label_count": int(d.get("label_count", 1)),
         "high_quality": bool(d.get("high_quality", False)),  # TODO: Enable by default.
         "configuration": request.app.config["brother_ql_web.configuration"],
+        "grocycode": d.get("grocycode", None),
+        "product": d.get("product", None),
+        "chore": d.get("chore", None),
+        "battery": d.get("battery", None),
+        "duedate": d.get("due_date", None),
+        "duedate_font_size": int(d.get("due_date_font_size", 60)),
+        "code_128": bool(d.get("code_128", False)),
+        "always_below_code": bool(d.get("always_below_code", False)),
     }
 
     return LabelParameters(**context)
@@ -132,6 +140,57 @@ def get_preview_image() -> bytes:
     else:
         bottle.response.set_header("Content-type", "image/png")
         return image_to_png_bytes(image)
+
+
+@bottle.post("/api/print/grocy")  # type: ignore[misc]
+@bottle.get("/api/print/grocy")  # type: ignore[misc]
+def print_grocy() -> dict[str, bool | str]:
+    """
+    API endpoint to consume the grocy label webhook.
+
+    returns: JSON
+    """
+    return_dict: dict[str, bool | str] = {"success": False}
+
+    try:
+        parameters = get_label_parameters(bottle.request, recode=True)
+    except (AttributeError, IndexError, LookupError) as e:
+        return_dict["error"] = str(e)
+        return return_dict
+
+    if parameters.product is None:
+        return_dict["error"] = "Please provide the product for the label"
+        return return_dict
+
+    qlr = generate_label(
+        parameters=parameters,
+        configuration=cast(Configuration, get_config("brother_ql_web.configuration")),
+        save_image_to="sample-out.png" if bottle.DEBUG else None,
+        grocy=True,
+    )
+
+    if not bottle.DEBUG:
+        try:
+            print_label(
+                parameters=parameters,
+                qlr=qlr,
+                configuration=cast(
+                    Configuration, get_config("brother_ql_web.configuration")
+                ),
+                backend_class=cast(
+                    BACKEND_TYPE,
+                    get_config("brother_ql_web.backend_class"),
+                ),
+            )
+        except Exception as e:
+            return_dict["message"] = str(e)
+            logger.warning("Exception happened: %s", e)
+            return return_dict
+
+    return_dict["success"] = True
+    if bottle.DEBUG:
+        return_dict["data"] = str(qlr.data)
+    return return_dict
 
 
 @bottle.post("/api/print/text")  # type: ignore[misc]

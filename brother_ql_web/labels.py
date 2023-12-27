@@ -10,10 +10,16 @@ from brother_ql.labels import ALL_LABELS, FormFactor, Label
 from brother_ql_web.configuration import Configuration
 from brother_ql_web import utils
 from PIL import Image, ImageDraw, ImageFont
-
+from tempfile import TemporaryDirectory
+from barcode.codex import Code128
+from barcode.writer import ImageWriter
+from pylibdmtx import pylibdmtx
 
 logger = logging.getLogger(__name__)
 del logging
+
+
+TEXT_ANCHOR = "lt"
 
 
 @dataclass
@@ -39,6 +45,14 @@ class LabelParameters:
     # TODO: Not yet taken into account. The number of dots in each direction has to be
     #       doubled. The generator/calculation methods have to be updated accordingly.
     high_quality: bool = False
+    grocycode: str | None = None
+    product: str | None = None
+    battery: str | None = None
+    chore: str | None = None
+    duedate: str | None = None
+    duedate_font_size: int = 60
+    code_128: bool = False
+    always_below_code: bool = False
 
     @property
     def _label(self) -> Label:
@@ -104,6 +118,135 @@ class LabelParameters:
     @property
     def height(self) -> int:
         return self.width_height[1]
+
+
+class GrocyCode:
+    text_font_size: int
+    duedate_font_size: int
+    font_path: str
+    code_height: int
+    text: str
+    duedate: str | None
+    grocycode: str
+    code_128: bool = False
+    margin_top: int
+    margin_left: int
+    margin_right: int
+    margin_bottom: int
+    tape_width: int
+
+    def __init__(self, parameters: LabelParameters) -> None:
+        if parameters.product:
+            self.text = parameters.product
+        elif parameters.chore:
+            self.text = parameters.chore
+        elif parameters.battery:
+            self.text = parameters.battery
+        else:
+            raise ValueError("one of product, chore, or battery must be given")
+
+        if parameters.orientation == "rotated":
+            self.tape_width = parameters.height
+        else:
+            self.tape_width = parameters.width
+
+        self.duedate = parameters.duedate
+        self.grocycode = parameters.grocycode or ""
+        self.font_path = parameters.font_path
+        self.code_128 = parameters.code_128
+        self.text_font_size = parameters.font_size
+        self.duedate_font_size = parameters.duedate_font_size
+        self.margin_top = parameters.margin_top
+        self.margin_left = parameters.margin_left
+        self.margin_right = parameters.margin_right
+        self.margin_bottom = parameters.margin_bottom
+        self.always_below_code = parameters.always_below_code
+
+    def text_font(self) -> ImageFont.FreeTypeFont:
+        return ImageFont.truetype(self.font_path, self.text_font_size)
+
+    def duedate_font(self) -> ImageFont.FreeTypeFont:
+        return ImageFont.truetype(self.font_path, self.duedate_font_size)
+
+    def barcode(self) -> Image.Image:
+        barcode = Code128(self.grocycode, writer=ImageWriter())
+        return cast(Image.Image, barcode.render())
+
+    def datamatrix(self) -> Image.Image:
+        encoded = pylibdmtx.encode(self.grocycode.encode("utf-8"), size="SquareAuto")
+        return Image.frombytes("RGB", (encoded.width, encoded.height), encoded.pixels)
+
+    def text_bbox(self, anchor: Tuple[int, int] = (0, 0)) -> Tuple[int, int, int, int]:
+        image = Image.new("RGB", (0, 0))
+        draw = ImageDraw.Draw(image)
+
+        return draw.textbbox(anchor, self.text, self.text_font(), TEXT_ANCHOR)
+
+    def duedate_bbox(
+        self, anchor: Tuple[int, int] = (0, 0)
+    ) -> Tuple[int, int, int, int]:
+        if self.duedate is None:
+            return (*anchor, *anchor)
+
+        image = Image.new("RGB", (0, 0))
+        draw = ImageDraw.Draw(image)
+
+        return draw.textbbox(anchor, self.duedate, self.duedate_font(), TEXT_ANCHOR)
+
+    def grocycode_image(self) -> Image.Image:
+        code = self.barcode() if self.code_128 else self.datamatrix()
+        code_bbox = (
+            self.margin_left,
+            self.margin_top,
+            self.margin_left + code.width,
+            self.margin_top + code.height,
+        )
+
+        text_below = self.always_below_code or self.code_128
+
+        if text_below:
+            text_anchor = (self.margin_left, code_bbox[3] + self.margin_top)
+        else:
+            text_anchor = (code_bbox[2] + self.margin_left, self.margin_top)
+
+        text_bbox = self.text_bbox(text_anchor)
+        duedate_anchor = (
+            self.margin_left,
+            max(code_bbox[3], text_bbox[3]) + self.margin_top,
+        )
+        duedate_bbox = self.duedate_bbox(duedate_anchor)
+
+        size = (
+            max(code_bbox[2], text_bbox[2], duedate_bbox[2]) + self.margin_right,
+            max(code_bbox[3], text_bbox[3], duedate_bbox[3]) + self.margin_bottom,
+        )
+
+        if min(*size) > self.tape_width:
+            logger.warn(
+                f"code dimensions {size} too large for label with width {self.tape_width}"
+            )
+
+        if size[0] <= self.tape_width:
+            rotated = False
+            size = (max(size[0], self.tape_width), size[1])
+        else:
+            rotated = True
+            size = (size[0], max(size[1], self.tape_width))
+
+        image = Image.new("RGB", size, "white")
+        draw = ImageDraw.Draw(image)
+
+        image.paste(code, code_bbox)
+        draw.text(text_anchor, self.text, "black", self.text_font(), TEXT_ANCHOR)
+        if self.duedate is not None:
+            draw.text(
+                duedate_anchor, self.duedate, "black", self.duedate_font(), TEXT_ANCHOR
+            )
+
+        if rotated:
+            image.transpose(Image.ROTATE_270)
+
+        return (image, rotated)
 
 
 def _determine_image_dimensions(
@@ -208,8 +351,13 @@ def generate_label(
     parameters: LabelParameters,
     configuration: Configuration,
     save_image_to: str | None = None,
+    grocy: bool = False,
 ) -> BrotherQLRaster:
-    image = create_label_image(parameters)
+    if grocy:
+        image, rotated = GrocyCode(parameters).grocycode_image()
+    else:
+        image = create_label_image(parameters)
+
     if save_image_to:
         image.save(save_image_to)
 
@@ -217,6 +365,8 @@ def generate_label(
     rotate: int | str = 0
     if parameters.kind == FormFactor.ENDLESS:
         rotate = 0 if parameters.orientation == "standard" else 90
+        if grocy and rotated:
+            rotate = 90
     elif parameters.kind in (FormFactor.DIE_CUT, FormFactor.ROUND_DIE_CUT):
         rotate = "auto"
 
