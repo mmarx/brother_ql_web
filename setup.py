@@ -28,6 +28,7 @@ setup(
             "black",
             "flake8",
             "pep8-naming",
+            "flake8-bugbear",
             "requests",
             'importlib-resources; python_version < "3.9"',
         ],

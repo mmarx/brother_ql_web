@@ -118,7 +118,7 @@ def print_text() -> dict[str, bool | str]:
 
     try:
         parameters = get_label_parameters(bottle.request)
-    except (AttributeError, IndexError, LookupError) as e:
+    except (AttributeError, LookupError) as e:
         return_dict["error"] = str(e)
         return return_dict
 
