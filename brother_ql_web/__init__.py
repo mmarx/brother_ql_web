@@ -7,7 +7,7 @@ from typing import Any
 def patch_deprecation_warning() -> None:
     """
     Avoid the deprecation warning from `brother_ql.devicedependent`. This has been
-    fixed in the Git version, but not in PyPI one:
+    fixed in the Git version, but not in the PyPI version:
     https://github.com/pklaus/brother_ql/commit/5c2b72b18bcf436c116f180a9147cbb6805958f5
     """
     original_logger = logging.getLogger("brother_ql.devicedependent").warning
