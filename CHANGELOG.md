@@ -1,5 +1,7 @@
 # Development version
 
+* Fix printing of umlauts and special characters which would previously fail due to *bottle* oddities.
+
 # Version 0.2.0 - 2023-11-23
 
 * Fix undefined variables introduced due to the migration.
