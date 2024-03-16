@@ -1,5 +1,7 @@
 # Development version
 
+# Version 0.2.1 - 2024-03-16
+
 * Fix printing of umlauts and special characters which would previously fail due to *bottle* oddities.
 
 # Version 0.2.0 - 2023-11-23
