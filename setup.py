@@ -8,7 +8,7 @@ ROOT_DIRECTORY = Path(__file__).parent.resolve()
 setup(
     name="brother_ql_web",
     description="Simple label designer API and web API for Brother QL label printers",
-    version="0.2.0",
+    version="0.2.1",
     license="GPL-3.0-only",
     long_description=(ROOT_DIRECTORY / "README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
