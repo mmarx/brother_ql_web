@@ -68,7 +68,7 @@ class GetBackendClassTestCase(TestCase):
 
         with self.assertRaisesRegex(
             utils.BackendGuessingError,
-            r"^Couln't guess the backend to use from the printer string descriptor$",
+            r"^Could not guess the backend to use from the printer string descriptor$",
         ):
             utils.get_backend_class(configuration)
 

@@ -36,7 +36,7 @@ def get_backend_class(configuration: Configuration) -> BACKEND_TYPE:
         selected_backend = guess_backend(configuration.printer.printer)
     except ValueError:
         raise BackendGuessingError(
-            "Couln't guess the backend to use from the printer string descriptor"
+            "Could not guess the backend to use from the printer string descriptor"
         )
     return cast(
         BACKEND_TYPE,
