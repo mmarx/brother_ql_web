@@ -7,3 +7,7 @@ requires = [
 mypy_path = '$MYPY_CONFIG_FILE_DIR/stubs'
 strict = true
 files = "brother_ql_web,tests"
+
+[tool.codespell]
+skip = "*.min.js*,*.min.css*,venv*"
+ignore-words-list = "assertIn"
