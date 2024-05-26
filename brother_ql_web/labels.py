@@ -33,6 +33,8 @@ class LabelParameters:
     font_family: str | None = None
     font_style: str | None = None
     text: str = ""
+    image: bytes | None = None
+    pdf: bytes | None = None
     font_size: int = 100
     label_size: str = "62"
     margin: int = 10
@@ -169,6 +171,9 @@ def _determine_text_offsets(
 
 
 def create_label_image(parameters: LabelParameters) -> Image.Image:
+    if parameters.image:
+        return Image.open(BytesIO(parameters.image))
+
     image_font = ImageFont.truetype(parameters.font_path, parameters.font_size)
 
     # Workaround for a bug in multiline_textsize()

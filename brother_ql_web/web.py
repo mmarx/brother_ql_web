@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import logging
+from io import BytesIO
 from pathlib import Path
 from typing import Any, cast, Dict  # TODO: Remove `Dict` after dropping Python 3.8.
 
 import bottle
+from brother_ql import BrotherQLRaster
+
 from brother_ql_web.configuration import Configuration
 from brother_ql_web.labels import (
     LabelParameters,
@@ -52,7 +55,18 @@ def labeldesigner() -> dict[str, Any]:
     }
 
 
-def get_label_parameters(request: bottle.BaseRequest) -> LabelParameters:
+def _save_to_bytes(upload: bottle.FileUpload | None) -> bytes | None:
+    if upload is None:
+        return None
+    output = BytesIO()
+    upload.save(output)
+    output.seek(0)
+    return output.getvalue()
+
+
+def get_label_parameters(
+    request: bottle.BaseRequest, should_be_file: bool = False
+) -> LabelParameters:
     # As we have strings, *bottle* would try to generate Latin-1 bytes from it
     # before decoding it back to UTF-8. This seems to break some umlauts, thus
     # resulting in UnicodeEncodeErrors being raised when going back to UTF-8.
@@ -66,10 +80,19 @@ def get_label_parameters(request: bottle.BaseRequest) -> LabelParameters:
     parameters.recode_unicode = False
     d = parameters.decode()  # UTF-8 decoded form data
 
-    font_family = d.get("font_family").rpartition("(")[0].strip()
-    font_style = d.get("font_family").rpartition("(")[2].rstrip(")")
+    try:
+        font_family = d.get("font_family").rpartition("(")[0].strip()
+        font_style = d.get("font_family").rpartition("(")[2].rstrip(")")
+    except AttributeError:
+        if should_be_file:
+            font_family = ""
+            font_style = ""
+        else:
+            raise
     context = {
         "text": d.get("text", ""),
+        "image": _save_to_bytes(request.files.get("image")),
+        "pdf": _save_to_bytes(request.files.get("pdf")),
         "font_size": int(d.get("font_size", 100)),
         "font_family": font_family,
         "font_style": font_style,
@@ -110,7 +133,7 @@ def get_preview_image() -> bytes:
 @bottle.get("/api/print/text")  # type: ignore[misc]
 def print_text() -> dict[str, bool | str]:
     """
-    API to print a label
+    API to print some text
 
     returns: JSON
     """
@@ -131,6 +154,39 @@ def print_text() -> dict[str, bool | str]:
         configuration=cast(Configuration, get_config("brother_ql_web.configuration")),
         save_image_to="sample-out.png" if bottle.DEBUG else None,
     )
+
+    return _print(parameters=parameters, qlr=qlr)
+
+
+@bottle.post("/api/print/image")  # type: ignore[misc]
+def print_image() -> dict[str, bool | str]:
+    """
+    API to print an image
+
+    returns: JSON
+    """
+    return_dict: dict[str, bool | str] = {"success": False}
+
+    try:
+        parameters = get_label_parameters(bottle.request, should_be_file=True)
+    except (AttributeError, LookupError) as e:
+        return_dict["error"] = str(e)
+        return return_dict
+
+    if parameters.image is None or not parameters.image:
+        return_dict["error"] = "Please provide the label image"
+        return return_dict
+
+    qlr = generate_label(
+        parameters=parameters,
+        configuration=cast(Configuration, get_config("brother_ql_web.configuration")),
+    )
+
+    return _print(parameters=parameters, qlr=qlr)
+
+
+def _print(parameters: LabelParameters, qlr: BrotherQLRaster) -> dict[str, bool | str]:
+    return_dict: dict[str, bool | str] = {"success": False}
 
     if not bottle.DEBUG:
         try:

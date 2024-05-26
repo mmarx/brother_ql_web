@@ -283,5 +283,53 @@ class PrintTextTestCase(TestCase):
             self.assertEqual(expected, fd.read())
 
 
+class PrintImageTestCase(TestCase):
+    def test_error__empty_image(self) -> None:
+        self.run_server()
+        response = requests.post(
+            url="http://localhost:8013/api/print/image", files={"image": b""}
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(
+            b'{"success": false, "error": "Please provide the label image"}',
+            response.content,
+        )
+        with open(cast(str, self.printer_file), mode="rb") as fd:
+            self.assertEqual(b"", fd.read())
+
+    def test_error__no_image(self) -> None:
+        self.run_server()
+        response = requests.post(url="http://localhost:8013/api/print/image")
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(
+            b'{"success": false, "error": "Please provide the label image"}',
+            response.content,
+        )
+        with open(cast(str, self.printer_file), mode="rb") as fd:
+            self.assertEqual(b"", fd.read())
+
+    def test_print_image(self) -> None:
+        image = files("tests") / "data" / "hello_world.png"
+        reference = (
+            files("tests") / "data" / "hello_world__label_size_62__standard.data"
+        )
+        with as_file(image) as path:
+            image_data = path.read_bytes()
+            expected = reference.read_bytes()
+
+        self.run_server()
+        response = requests.post(
+            url=(
+                "http://localhost:8013/api/print/image?"
+                "label_size=62&orientation=standard"
+            ),
+            files={"image": image_data},
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(b'{"success": true}', response.content)
+        with open(cast(str, self.printer_file), mode="rb") as fd:
+            self.assertEqual(expected, fd.read())
+
+
 class MainTestCase(TestCase):
     pass
