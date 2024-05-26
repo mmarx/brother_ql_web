@@ -49,6 +49,7 @@ All in all, the web server offers:
 * a web GUI allowing you to print your labels at `/labeldesigner`,
 * an API at `/api/print/text?text=Your_Text&font_size=100&font_family=Minion%20Pro%20(%20Semibold%20)`
   to print a label containing 'Your Text' with the specified font properties.
+* an API at `/api/print/image` to print a label image passed through the `image` file value.
 
 ### About this fork
 
@@ -68,6 +69,7 @@ At the moment there are no plans to submit any pull request to the upstream repo
   * Upgrade Bootstrap and drop jQuery as Bootstrap does not rely on it anymore.
   * Conform to PEP8 coding style.
   * Add some more printing options, like the number of labels to print for a session.
+  * Add support for printing images directly.
 
 ### License
 

@@ -101,7 +101,7 @@ class LabeldesignerTestCase(TestCase):
 
 
 class GetLabelParametersTestCase(TestCase):
-    def test_all_set(self) -> None:
+    def test_all_params_set(self) -> None:
         request = mock.Mock()
         request.params.decode.return_value = dict(
             font_family="DejaVu Serif (Book)",
@@ -142,11 +142,13 @@ class GetLabelParametersTestCase(TestCase):
                 margin_right=38,
                 label_count=20,
                 high_quality=True,
+                image=b"",
+                pdf=b"",
             ),
             parameters,
         )
 
-    def test_mostly_default_values(self) -> None:
+    def test_mostly_default_params_values(self) -> None:
         request = mock.Mock()
         request.params.decode.return_value = dict(font_family="Roboto (Regular)")
         request.app.config = {
@@ -172,6 +174,8 @@ class GetLabelParametersTestCase(TestCase):
                 margin_right=35,
                 label_count=1,
                 high_quality=False,
+                image=b"",
+                pdf=b"",
             ),
             parameters,
         )
