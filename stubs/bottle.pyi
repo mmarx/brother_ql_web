@@ -94,7 +94,7 @@ class Route:
         name: Incomplete | None = ...,
         plugins: Incomplete | None = ...,
         skiplist: Incomplete | None = ...,
-        **config
+        **config,
     ) -> None: ...
     def call(self): ...
     def reset(self) -> None: ...
@@ -135,37 +135,37 @@ class Bottle:
         name: str | None = ...,
         apply: Any | None = ...,
         skip: Any | None = ...,
-        **config
+        **config,
     ): ...
     def get(
         self,
         path: str | list[str] | None = ...,
         method: str | list[str] = ...,
-        **options
+        **options,
     ): ...
     def post(
         self,
         path: str | list[str] | None = ...,
         method: str | list[str] = ...,
-        **options
+        **options,
     ): ...
     def put(
         self,
         path: str | list[str] | None = ...,
         method: str | list[str] = ...,
-        **options
+        **options,
     ): ...
     def delete(
         self,
         path: str | list[str] | None = ...,
         method: str | list[str] = ...,
-        **options
+        **options,
     ): ...
     def patch(
         self,
         path: str | list[str] | None = ...,
         method: str | list[str] = ...,
-        **options
+        **options,
     ): ...
     def error(self, code: int = ..., callback: Incomplete | None = ...): ...
     def default_error_handler(self, res): ...
@@ -270,7 +270,7 @@ class BaseResponse:
         body: str = ...,
         status: Incomplete | None = ...,
         headers: Incomplete | None = ...,
-        **more_headers
+        **more_headers,
     ) -> None: ...
     def copy(self, cls: Incomplete | None = ...): ...
     def __iter__(self): ...
@@ -318,7 +318,7 @@ class HTTPResponse(Response, BottleException):
         body: str = ...,
         status: Incomplete | None = ...,
         headers: Incomplete | None = ...,
-        **more_headers
+        **more_headers,
     ) -> None: ...
     def apply(self, other) -> None: ...
 
@@ -332,7 +332,7 @@ class HTTPError(HTTPResponse):
         body: Incomplete | None = ...,
         exception: Incomplete | None = ...,
         traceback: Incomplete | None = ...,
-        **more_headers
+        **more_headers,
     ) -> None: ...
 
 class PluginError(BottleException): ...
@@ -622,7 +622,7 @@ def run(
     plugins: Incomplete | None = ...,
     debug: Incomplete | None = ...,
     config: Incomplete | None = ...,
-    **kargs
+    **kargs,
 ) -> None: ...
 
 class FileCheckerThread(threading.Thread):
@@ -650,7 +650,7 @@ class BaseTemplate:
         name: Incomplete | None = ...,
         lookup: Incomplete | None = ...,
         encoding: str = ...,
-        **settings
+        **settings,
     ) -> None: ...
     @classmethod
     def search(cls, name, lookup: Incomplete | None = ...): ...
@@ -678,7 +678,7 @@ class Jinja2Template(BaseTemplate):
         filters: Incomplete | None = ...,
         tests: Incomplete | None = ...,
         globals=...,
-        **kwargs
+        **kwargs,
     ) -> None: ...
     def render(self, *args, **kwargs): ...
     def loader(self, name): ...
@@ -691,7 +691,7 @@ class SimpleTemplate(BaseTemplate):
         escape_func=...,
         noescape: bool = ...,
         syntax: Incomplete | None = ...,
-        **ka
+        **ka,
     ): ...
     def co(self): ...
     encoding: Incomplete

@@ -17,5 +17,5 @@ def create_label(
     dither: bool = ...,
     compress: bool = ...,
     red: bool = ...,
-    **kwargs: bool | int | str
+    **kwargs: bool | int | str,
 ) -> None: ...

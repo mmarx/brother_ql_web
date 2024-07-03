@@ -18,5 +18,5 @@ def convert(
     qlr: BrotherQLRaster,
     images: list[str | Image.Image],
     label: str,
-    **kwargs: bool | int | str
+    **kwargs: bool | int | str,
 ) -> bytes: ...
