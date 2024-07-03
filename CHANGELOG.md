@@ -1,6 +1,7 @@
 # Development version
 
 * Add API for printing images.
+* Migrate to `pyproject.toml`.
 
 # Version 0.2.1 - 2024-03-16
 
