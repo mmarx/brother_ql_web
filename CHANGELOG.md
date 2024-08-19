@@ -1,7 +1,10 @@
 # Development version
 
+# Version 0.3.0 - 2024-08-19
+
 * Add API for printing images.
 * Migrate to `pyproject.toml`.
+* Update bundled Bootstrap to version 5.3.3 and Bootstrap Icons to version 1.11.3.
 
 # Version 0.2.1 - 2024-03-16
 
