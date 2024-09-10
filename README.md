@@ -77,6 +77,6 @@ This software is published under the terms of the GPLv3, see the LICENSE file in
 
 Parts of this package are redistributed software products from 3rd parties. They are subject to different licenses:
 
-* [Bootstrap](https://github.com/twbs/bootstrap) v5.3.1, MIT License
-* [Bootstrap Icons](https://github.com/twbs/icons) v1.10.5, MIT License
+* [Bootstrap](https://github.com/twbs/bootstrap) v5.3.3, MIT License
+* [Bootstrap Icons](https://github.com/twbs/icons) v1.11.3, MIT License
   * The CSS files received some minor modification to allow the font files to be loaded from the parent directory.
