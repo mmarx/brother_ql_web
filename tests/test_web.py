@@ -213,27 +213,27 @@ class GetPreviewImageTestCase(TestCase):
         headers = {
             "Content-Type": "multipart/form-data; boundary=---------------------------381934621323024354152349680295"  # noqa: E501
         }
-        body = """
------------------------------381934621323024354152349680295
-Content-Disposition: form-data; name="text"
-
-abcdefgö+ëŠ
------------------------------381934621323024354152349680295
-Content-Disposition: form-data; name="font_family"
-
-Roboto (Medium)
------------------------------381934621323024354152349680295
-Content-Disposition: form-data; name="label_size"
-
-62
------------------------------381934621323024354152349680295--
+        body = """\r
+-----------------------------381934621323024354152349680295\r
+Content-Disposition: form-data; name="text"\r
+\r
+abcdefgö+ëŠ\r
+-----------------------------381934621323024354152349680295\r
+Content-Disposition: form-data; name="font_family"\r
+\r
+Roboto (Medium)\r
+-----------------------------381934621323024354152349680295\r
+Content-Disposition: form-data; name="label_size"\r
+\r
+62\r
+-----------------------------381934621323024354152349680295--\r
 """.encode()
         response = requests.post(
             "http://localhost:8013/api/preview/text?return_format=png",
             data=body,
             headers=headers,
         )
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(200, response.status_code, response.content)
         self.assertLessEqual(14000, len(response.content))  # 14061 bytes
 
 
