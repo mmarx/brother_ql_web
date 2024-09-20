@@ -246,8 +246,8 @@ class PrintTextTestCase(TestCase):
             (
                 b'{"success": false, '
                 b'"error": "Could not find valid font specifier. '
-                b'Please pass the `font_family` parameter with the family and style '
-                b'in the format `Roboto (Medium)`, where Roboto is the family name '
+                b"Please pass the `font_family` parameter with the family and style "
+                b"in the format `Roboto (Medium)`, where Roboto is the family name "
                 b'and Medium the corresponding font style."}'
             ),
             response.content,
