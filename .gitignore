@@ -1,5 +1,8 @@
-# ignore config.json
+# Ignore custom configuration file.
 config.json
+
+# Ignore test files.
+sample-out.png
 
 ### Python template
 # Byte-compiled / optimized / DLL files

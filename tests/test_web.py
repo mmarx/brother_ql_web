@@ -245,7 +245,10 @@ class PrintTextTestCase(TestCase):
         self.assertEqual(
             (
                 b'{"success": false, '
-                b"\"error\": \"'NoneType' object has no attribute 'rpartition'\"}"
+                b'"error": "Could not find valid font specifier. '
+                b'Please pass the `font_family` parameter with the family and style '
+                b'in the format `Roboto (Medium)`, where Roboto is the family name '
+                b'and Medium the corresponding font style."}'
             ),
             response.content,
         )

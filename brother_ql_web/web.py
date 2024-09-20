@@ -88,7 +88,12 @@ def get_label_parameters(
             font_family = ""
             font_style = ""
         else:
-            raise
+            raise ValueError(
+                "Could not find valid font specifier. Please pass the `font_family` "
+                "parameter with the family and style in the format `Roboto (Medium)`, "
+                "where Roboto is the family name and Medium the corresponding font "
+                "style."
+            )
     context = {
         "text": d.get("text", ""),
         "image": _save_to_bytes(request.files.get("image")),
@@ -141,7 +146,7 @@ def print_text() -> dict[str, bool | str]:
 
     try:
         parameters = get_label_parameters(bottle.request)
-    except (AttributeError, LookupError) as e:
+    except (AttributeError, LookupError, ValueError) as e:
         return_dict["error"] = str(e)
         return return_dict
 
@@ -169,7 +174,7 @@ def print_image() -> dict[str, bool | str]:
 
     try:
         parameters = get_label_parameters(bottle.request, should_be_file=True)
-    except (AttributeError, LookupError) as e:
+    except (AttributeError, LookupError, ValueError) as e:
         return_dict["error"] = str(e)
         return return_dict
 
