@@ -1,5 +1,6 @@
 # Development version
 
+* Drop support for Python 3.8.
 * Add optional dependency on *fontra* for cases where *fontconfig* is not available by providing the *fontra* extra. (Many thanks to *chrismaster* for the initial implementation/recommendation and *NCBM* as the maintainer of *fontra* for the quick enhancement of adding the missing bits for better *fontconfig* compatibility.)
 
 # Version 0.3.0 - 2024-08-19
