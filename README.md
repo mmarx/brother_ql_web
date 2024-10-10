@@ -30,6 +30,10 @@ If you are not able to install or use `fontconfig` for some reasons, `fontra` is
 
 Grab a copy of the [example configuration file](https://github.com/FriedrichFroebel/brother_ql_web/blob/master/config.example.json) and adjust it to your needs. You can store this file on your device wherever you want - just make sure to remember the full path as you will have to pass it to the CLI.
 
+Some special notes about the values:
+
+* Setting the log level to *DEBUG* will enable the debug mode of *bottle* as well. Additionally, this avoids sending the commands to the printer itself. You most likely do not want to use the *DEBUG* level unless you know what you are doing.
+
 ### Startup
 
 To start the server, either run `brother_ql_web` (only works if installed) or `python -m brother_ql_web`. You will always have to pass the path to your configuration file to use and the string descriptor of the printer.
