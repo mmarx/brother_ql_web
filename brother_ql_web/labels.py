@@ -3,11 +3,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 from io import BytesIO
-from typing import (
-    cast,
-    Literal,
-    Tuple,
-)  # TODO: Remove `Tuple` after dropping Python 3.8.
+from typing import cast, Literal
 
 from brother_ql import BrotherQLRaster, create_label
 from brother_ql.devicedependent import (
@@ -94,7 +90,7 @@ class LabelParameters:
     def width_height(self) -> Tuple[int, int]:
         try:
             width, height = cast(
-                Tuple[int, int], label_type_specs[self.label_size]["dots_printable"]
+                tuple[int, int], label_type_specs[self.label_size]["dots_printable"]
             )
         except KeyError:
             raise LookupError("Unknown label_size")
@@ -116,7 +112,7 @@ class LabelParameters:
 
 def _determine_image_dimensions(
     text: str, image_font: ImageFont.FreeTypeFont, parameters: LabelParameters
-) -> Tuple[int, int, int, int]:
+) -> tuple[int, int, int, int]:
     image = Image.new("L", (20, 20), "white")
     draw = ImageDraw.Draw(image)
 
@@ -148,7 +144,7 @@ def _determine_text_offsets(
     text_height: int,
     text_width: int,
     parameters: LabelParameters,
-) -> Tuple[int, int]:
+) -> tuple[int, int]:
     if parameters.orientation == "standard":
         if parameters.kind in (DIE_CUT_LABEL, ROUND_DIE_CUT_LABEL):
             vertical_offset = (height - text_height) // 2

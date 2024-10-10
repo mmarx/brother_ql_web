@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-try:
-    from importlib.resources import as_file, files
-except ImportError:
-    from importlib_resources import as_file, files  # type: ignore[import-not-found,no-redef]  # noqa: E501
 import base64
 import os
 import subprocess
+from importlib.resources import as_file, files
 from tempfile import NamedTemporaryFile
 from threading import Thread
 from time import sleep

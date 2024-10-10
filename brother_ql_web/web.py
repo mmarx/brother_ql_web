@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from io import BytesIO
 from pathlib import Path
-from typing import Any, cast, Dict  # TODO: Remove `Dict` after dropping Python 3.8.
+from typing import Any, cast
 
 import bottle
 from brother_ql import BrotherQLRaster
@@ -42,7 +42,7 @@ def serve_static(filename: str) -> bottle.HTTPResponse:
 @bottle.route("/labeldesigner")  # type: ignore[misc]
 @bottle.jinja2_view("labeldesigner.jinja2")  # type: ignore[misc]
 def labeldesigner() -> dict[str, Any]:
-    fonts = cast(Dict[str, Dict[str, str]], get_config("brother_ql_web.fonts"))
+    fonts = cast(dict[str, dict[str, str]], get_config("brother_ql_web.fonts"))
     font_family_names = sorted(list(fonts.keys()))
     configuration = cast(Configuration, get_config("brother_ql_web.configuration"))
     return {

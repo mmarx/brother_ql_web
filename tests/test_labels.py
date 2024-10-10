@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-try:
-    from importlib.resources import as_file, files
-except ImportError:
-    from importlib_resources import as_file, files  # type: ignore[import-not-found,no-redef]  # noqa: E501
+from importlib.resources import as_file, files
 from tempfile import NamedTemporaryFile
 from unittest import mock
 
