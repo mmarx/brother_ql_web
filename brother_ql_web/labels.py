@@ -70,7 +70,7 @@ class LabelParameters:
         return self._scale_margin(self.margin_right)
 
     @property
-    def fill_color(self) -> Tuple[int, int, int]:
+    def fill_color(self) -> tuple[int, int, int]:
         return (255, 0, 0) if "red" in self.label_size else (0, 0, 0)
 
     @property
@@ -87,7 +87,7 @@ class LabelParameters:
         return path
 
     @property
-    def width_height(self) -> Tuple[int, int]:
+    def width_height(self) -> tuple[int, int]:
         try:
             width, height = cast(
                 tuple[int, int], label_type_specs[self.label_size]["dots_printable"]

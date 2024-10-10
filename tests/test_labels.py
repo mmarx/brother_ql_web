@@ -325,9 +325,10 @@ class PrintLabelTestCase(TestCase):
 
         # 1) One label.
         parameters.label_count = 1
-        with mock.patch.object(labels.logger, "info") as info_mock, mock.patch.object(
-            Backend, "write"
-        ) as write_mock:
+        with (
+            mock.patch.object(labels.logger, "info") as info_mock,
+            mock.patch.object(Backend, "write") as write_mock,
+        ):
             labels.print_label(
                 parameters=parameters,
                 qlr=qlr,
@@ -339,9 +340,10 @@ class PrintLabelTestCase(TestCase):
 
         # 2) Multiple labels.
         parameters.label_count = 5
-        with mock.patch.object(labels.logger, "info") as info_mock, mock.patch.object(
-            Backend, "write"
-        ) as write_mock:
+        with (
+            mock.patch.object(labels.logger, "info") as info_mock,
+            mock.patch.object(Backend, "write") as write_mock,
+        ):
             labels.print_label(
                 parameters=parameters,
                 qlr=qlr,
