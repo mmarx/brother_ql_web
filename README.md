@@ -7,7 +7,7 @@ You need Python 3 for this software to work.
 ![Screenshot](./brother_ql_web/static/images/screenshots/Label-Designer_Desktop.png)
 
 The web interface is [responsive](https://en.wikipedia.org/wiki/Responsive_web_design).
-There's also a screenshot showing [how it looks on a smartphone](./static/images/screenshots/Label-Designer_Phone.png)
+There is also a screenshot showing [how it looks on a smartphone](./static/images/screenshots/Label-Designer_Phone.png)
 
 ### Installation
 
@@ -17,12 +17,12 @@ The easiest way to use this package is to install it from PyPI:
 
 Alternatively, you can use brother_ql_web without installing it, straight out of an unpacked source tarball or a VCS checkout.
 
-It's also possible to install it from source for the current interpreter with:
+It is also possible to install it from source for the current interpreter with:
 
     pip install .
 
 
-In addition to the Python package requirements itself, `fontconfig` should be installed on your system. It's used to identify and inspect fonts on your machine. This package is pre-installed on many Linux distributions. If you're using a Mac, you might want to use [Homebrew](https://brew.sh) to install fontconfig using [`brew install fontconfig`](https://formulae.brew.sh/formula/fontconfig).
+In addition to the Python package requirements itself, `fontconfig` should be installed on your system. It is used to identify and inspect fonts on your machine. This package is pre-installed on many Linux distributions. If you are using a Mac, you might want to use [Homebrew](https://brew.sh) to install `fontconfig` using [`brew install fontconfig`](https://formulae.brew.sh/formula/fontconfig).
 
 If you are not able to install or use `fontconfig` for some reasons, `fontra` is available as a fallback. You can install if using the `fontra` extra.
 
@@ -46,7 +46,7 @@ Additional parameters might be passed and will overwrite the values configured i
 
 ### Usage
 
-Once it's running, access the web interface by opening the page with your browser.
+Once it is running, access the web interface by opening the page with your browser.
 
 If you run it on your local machine, go to <http://localhost:8013> (You can change the default port 8013 using the `--port` argument). You will then be forwarded by default to the interactive web GUI located at `/labeldesigner`.
 
@@ -69,13 +69,14 @@ At the moment there are no plans to submit any pull request to the upstream repo
 
 #### Differences from upstream
 
-  * Package requires Python ≥ 3.8.
+  * Package requires Python ≥ 3.9.
   * Migrate to a package-based structure.
   * Ensure compatibility with latest dependency versions.
   * Upgrade Bootstrap and drop jQuery as Bootstrap does not rely on it anymore.
   * Conform to PEP8 coding style.
   * Add some more printing options, like the number of labels to print for a session.
   * Add support for printing images directly.
+  * Provide fallback for `fontconfig`.
 
 ### License
 
