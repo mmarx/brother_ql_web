@@ -1,39 +1,42 @@
+from __future__ import annotations
+
 from _typeshed import Incomplete
+from typing import NoReturn
 from brother_ql.helpers import ElementsManager as ElementsManager
 
 class Model:
-    identifier: Incomplete
-    min_max_length_dots: Incomplete
-    min_max_feed: Incomplete
-    number_bytes_per_row: Incomplete
-    additional_offset_r: Incomplete
-    mode_setting: Incomplete
-    cutting: Incomplete
-    expanded_mode: Incomplete
-    compression: Incomplete
-    two_color: Incomplete
+    identifier: str
+    min_max_length_dots: tuple[int, int]
+    min_max_feed: tuple[int, int]
+    number_bytes_per_row: int
+    additional_offset_r: int
+    mode_setting: bool
+    cutting: bool
+    expanded_mode: bool
+    compression: bool
+    two_color: bool
     @property
-    def name(self): ...
+    def name(self) -> str: ...
     def __init__(
         self,
-        identifier,
-        min_max_length_dots,
-        min_max_feed,
-        number_bytes_per_row,
-        additional_offset_r,
-        mode_setting,
-        cutting,
-        expanded_mode,
-        compression,
-        two_color,
-    ) -> None: ...
-    def __lt__(self, other): ...
-    def __le__(self, other): ...
-    def __gt__(self, other): ...
-    def __ge__(self, other): ...
+        identifier: str,
+        min_max_length_dots: tuple[int, int],
+        min_max_feed: tuple[int, int] = (35, 1500),
+        number_bytes_per_row: int = 90,
+        additional_offset_r: int = 0,
+        mode_setting: bool = True,
+        cutting: bool = True,
+        expanded_mode: bool = True,
+        compression: bool = True,
+        two_color: bool = False,
+    ) -> NoReturn: ...
+    def __lt__(self, other: Model) -> bool: ...
+    def __le__(self, other: Model) -> bool: ...
+    def __gt__(self, other: Model) -> bool: ...
+    def __ge__(self, other: Model) -> bool: ...
 
-ALL_MODELS: Incomplete
+ALL_MODELS: list[Model]
 
 class ModelsManager(ElementsManager):
-    DEFAULT_ELEMENTS: Incomplete
+    DEFAULT_ELEMENTS: list[Model]
     ELEMENTS_NAME: str

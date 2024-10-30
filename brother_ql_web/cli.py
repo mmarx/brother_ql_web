@@ -4,9 +4,11 @@ import logging
 import random
 import sys
 from argparse import ArgumentParser, Namespace
+from operator import attrgetter
 from typing import cast
 
-from brother_ql.devicedependent import models, label_sizes
+from brother_ql.labels import ALL_LABELS
+from brother_ql.models import ALL_MODELS
 from brother_ql_web.configuration import Configuration, Font
 from brother_ql_web.utils import collect_fonts
 
@@ -46,7 +48,7 @@ def get_parameters() -> Namespace:
     parser.add_argument(
         "--model",
         default=False,
-        choices=models,
+        choices=list(map(attrgetter("identifier"), ALL_MODELS)),
         help="The model of your printer (default: QL-500)",
     )
     parser.add_argument(
@@ -127,6 +129,7 @@ def update_configuration_from_parameters(
         configuration.label.default_orientation = parameters.default_orientation
 
     # Configuration issues.
+    label_sizes = list(map(attrgetter("identifier"), ALL_LABELS))
     if configuration.label.default_size not in label_sizes:
         raise InvalidLabelSize(
             "Invalid default label size. Please choose one of the following:\n"

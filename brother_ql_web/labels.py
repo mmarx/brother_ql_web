@@ -6,13 +6,7 @@ from io import BytesIO
 from typing import cast, Literal
 
 from brother_ql import BrotherQLRaster, create_label
-from brother_ql.devicedependent import (
-    ENDLESS_LABEL,
-    DIE_CUT_LABEL,
-    ROUND_DIE_CUT_LABEL,
-    label_type_specs,
-)
-from brother_ql.labels import FormFactor
+from brother_ql.labels import ALL_LABELS, FormFactor, Label
 from brother_ql_web.configuration import Configuration
 from brother_ql_web import utils
 from PIL import Image, ImageDraw, ImageFont
@@ -47,8 +41,15 @@ class LabelParameters:
     high_quality: bool = False
 
     @property
+    def _label(self) -> Label:
+        for label in ALL_LABELS:
+            if label.identifier == self.label_size:
+                return label
+        raise LookupError("Unknown label_size")
+
+    @property
     def kind(self) -> FormFactor:
-        return cast(FormFactor, label_type_specs[self.label_size]["kind"])
+        return self._label.form_factor
 
     def _scale_margin(self, margin: int) -> int:
         return int(self.font_size * margin / 100.0)
@@ -88,12 +89,7 @@ class LabelParameters:
 
     @property
     def width_height(self) -> tuple[int, int]:
-        try:
-            width, height = cast(
-                tuple[int, int], label_type_specs[self.label_size]["dots_printable"]
-            )
-        except KeyError:
-            raise LookupError("Unknown label_size")
+        width, height = self._label.dots_printable
 
         if height > width:
             width, height = height, width
@@ -122,14 +118,14 @@ def _determine_image_dimensions(
     text_width, text_height = (right - left, bottom - top)
     width, height = parameters.width_height
     if parameters.orientation == "standard":
-        if parameters.kind in (ENDLESS_LABEL,):
+        if parameters.kind in (FormFactor.ENDLESS,):
             height = (
                 text_height
                 + parameters.margin_top_scaled
                 + parameters.margin_bottom_scaled
             )
     elif parameters.orientation == "rotated":
-        if parameters.kind in (ENDLESS_LABEL,):
+        if parameters.kind in (FormFactor.ENDLESS,):
             width = (
                 text_width
                 + parameters.margin_left_scaled
@@ -146,7 +142,7 @@ def _determine_text_offsets(
     parameters: LabelParameters,
 ) -> tuple[int, int]:
     if parameters.orientation == "standard":
-        if parameters.kind in (DIE_CUT_LABEL, ROUND_DIE_CUT_LABEL):
+        if parameters.kind in (FormFactor.DIE_CUT, FormFactor.ROUND_DIE_CUT):
             vertical_offset = (height - text_height) // 2
             vertical_offset += (
                 parameters.margin_top_scaled - parameters.margin_bottom_scaled
@@ -159,7 +155,7 @@ def _determine_text_offsets(
         vertical_offset += (
             parameters.margin_top_scaled - parameters.margin_bottom_scaled
         ) // 2
-        if parameters.kind in (DIE_CUT_LABEL, ROUND_DIE_CUT_LABEL):
+        if parameters.kind in (FormFactor.DIE_CUT, FormFactor.ROUND_DIE_CUT):
             horizontal_offset = max((width - text_width) // 2, 0)
         else:
             horizontal_offset = parameters.margin_left_scaled
@@ -219,9 +215,9 @@ def generate_label(
 
     red: bool = "red" in parameters.label_size
     rotate: int | str = 0
-    if parameters.kind == ENDLESS_LABEL:
+    if parameters.kind == FormFactor.ENDLESS:
         rotate = 0 if parameters.orientation == "standard" else 90
-    elif parameters.kind in (ROUND_DIE_CUT_LABEL, DIE_CUT_LABEL):
+    elif parameters.kind in (FormFactor.DIE_CUT, FormFactor.ROUND_DIE_CUT):
         rotate = "auto"
 
     if parameters.high_quality:

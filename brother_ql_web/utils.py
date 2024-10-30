@@ -4,7 +4,7 @@ import sys
 from typing import cast
 
 from brother_ql.backends import backend_factory, BrotherQLBackendGeneric, guess_backend
-from brother_ql.devicedependent import label_type_specs, label_sizes
+from brother_ql.labels import ALL_LABELS
 from brother_ql_web.configuration import Configuration
 from brother_ql_web.font_helpers import get_fonts
 
@@ -24,7 +24,7 @@ def collect_fonts(configuration: Configuration) -> dict[str, dict[str, str]]:
 
 
 def get_label_sizes() -> list[tuple[str, str]]:
-    return [(name, cast(str, label_type_specs[name]["name"])) for name in label_sizes]
+    return [(label.identifier, label.name) for label in ALL_LABELS]
 
 
 class BackendGuessingError(ValueError):
