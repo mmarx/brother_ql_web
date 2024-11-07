@@ -2,7 +2,7 @@
 
 This is a web service to print labels on Brother QL label printers. While it is primarily focused on the API/GUI part, the corresponding functionality is provided as a library as well.
 
-You need Python 3 for this software to work.
+You need a considerably recent Python 3 version for this software to work.
 
 ![Screenshot](./brother_ql_web/static/images/screenshots/Label-Designer_Desktop.png)
 
@@ -24,7 +24,7 @@ It is also possible to install it from source for the current interpreter with:
 
 In addition to the Python package requirements itself, `fontconfig` should be installed on your system. It is used to identify and inspect fonts on your machine. This package is pre-installed on many Linux distributions. If you are using a Mac, you might want to use [Homebrew](https://brew.sh) to install `fontconfig` using [`brew install fontconfig`](https://formulae.brew.sh/formula/fontconfig).
 
-If you are not able to install or use `fontconfig` for some reasons, `fontra` is available as a fallback. You can install if using the `fontra` extra.
+If you are not able to install or use `fontconfig` for some reasons, `fontra` is available as a fallback. You can install it using the `fontra` extra.
 
 ### Configuration file
 
@@ -36,11 +36,11 @@ Some special notes about the values:
 
 ### Startup
 
-To start the server, either run `brother_ql_web` (only works if installed) or `python -m brother_ql_web`. You will always have to pass the path to your configuration file to use and the string descriptor of the printer.
+To start the server, either run `brother_ql_web` (only works if installed) or `python -m brother_ql_web`. You will always have to pass the path to your configuration file to use.
 
 The most basic call will look like this:
 
-    python -m brother_ql_web --configuration $HOME/printers/brother_ql_web/configuration_dev.json file:///dev/usb/lp0
+    python -m brother_ql_web --configuration $HOME/printers/brother_ql_web/configuration_dev.json
 
 Additional parameters might be passed and will overwrite the values configured in your configuration file. Please refer to the `--help` flag to learn more about the possible flags you might pass.
 
@@ -73,7 +73,7 @@ At the moment there are no plans to submit any pull request to the upstream repo
   * Migrate to a package-based structure.
   * Ensure compatibility with latest dependency versions.
   * Upgrade Bootstrap and drop jQuery as Bootstrap does not rely on it anymore.
-  * Conform to PEP8 coding style.
+  * Conform to PEP 8 coding style.
   * Add some more printing options, like the number of labels to print for a session.
   * Add support for printing images directly.
   * Provide fallback for `fontconfig`.
@@ -82,7 +82,7 @@ At the moment there are no plans to submit any pull request to the upstream repo
 
 This software is published under the terms of the GPLv3, see the LICENSE file in the repository.
 
-Parts of this package are redistributed software products from 3rd parties. They are subject to different licenses:
+Parts of this package are redistributed software products from third-parties. They are subject to different licenses:
 
 * [Bootstrap](https://github.com/twbs/bootstrap) v5.3.3, MIT License
 * [Bootstrap Icons](https://github.com/twbs/icons) v1.11.3, MIT License
