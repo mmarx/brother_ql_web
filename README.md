@@ -44,6 +44,10 @@ The most basic call will look like this:
 
 Additional parameters might be passed and will overwrite the values configured in your configuration file. Please refer to the `--help` flag to learn more about the possible flags you might pass.
 
+#### Running with Docker compose
+
+To start the server with Docker compose, create your configuration file `config.json` in the repository root, then run `docker compose up`.
+
 ### Usage
 
 Once it is running, access the web interface by opening the page with your browser.
