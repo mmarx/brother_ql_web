@@ -41,7 +41,8 @@ dependencies = [
     "jinja2",
     "Pillow>=8",
     "python-barcode",
-    "pylibdmtx"
+    "pylibdmtx",
+    "setuptools"
 ]
 
 [project.scripts]
