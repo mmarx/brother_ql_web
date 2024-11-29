@@ -11,7 +11,6 @@ from brother_ql.labels import ALL_LABELS, FormFactor, Label
 from brother_ql_web.configuration import Configuration
 from brother_ql_web import utils
 from PIL import Image, ImageDraw, ImageFont
-from tempfile import TemporaryDirectory
 from barcode.codex import Code128
 from barcode.writer import ImageWriter
 from pylibdmtx import pylibdmtx
@@ -177,15 +176,15 @@ class GrocyCode:
         encoded = pylibdmtx.encode(self.grocycode.encode("utf-8"), size="SquareAuto")
         return Image.frombytes("RGB", (encoded.width, encoded.height), encoded.pixels)
 
-    def text_bbox(self, anchor: Tuple[int, int] = (0, 0)) -> Tuple[int, int, int, int]:
+    def text_bbox(self, anchor: tuple[int, int] = (0, 0)) -> tuple[int, int, int, int]:
         image = Image.new("RGB", (0, 0))
         draw = ImageDraw.Draw(image)
 
         return draw.textbbox(anchor, self.text, self.text_font(), TEXT_ANCHOR)
 
     def duedate_bbox(
-        self, anchor: Tuple[int, int] = (0, 0)
-    ) -> Tuple[int, int, int, int]:
+        self, anchor: tuple[int, int] = (0, 0)
+    ) -> tuple[int, int, int, int]:
         if self.duedate is None:
             return (*anchor, *anchor)
 
@@ -194,7 +193,7 @@ class GrocyCode:
 
         return draw.textbbox(anchor, self.duedate, self.duedate_font(), TEXT_ANCHOR)
 
-    def grocycode_image(self) -> Image.Image:
+    def grocycode_image(self) -> tuple[Image.Image, bool]:
         code = self.barcode() if self.code_128 else self.datamatrix()
         code_bbox = (
             self.margin_left,
@@ -224,7 +223,8 @@ class GrocyCode:
 
         if min(*size) > self.tape_width:
             logger.warn(
-                f"code dimensions {size} too large for label with width {self.tape_width}"
+                f"code dimensions {size} too large for label with "
+                "width {self.tape_width}"
             )
 
         if size[0] <= self.tape_width:
