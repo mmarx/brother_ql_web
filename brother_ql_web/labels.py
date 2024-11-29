@@ -5,7 +5,8 @@ from dataclasses import dataclass
 from io import BytesIO
 from typing import cast, Literal
 
-from brother_ql import BrotherQLRaster, create_label
+from brother_ql import BrotherQLRaster
+from brother_ql.conversion import convert
 from brother_ql.labels import ALL_LABELS, FormFactor, Label
 from brother_ql_web.configuration import Configuration
 from brother_ql_web import utils
@@ -374,9 +375,9 @@ def generate_label(
         logger.warning("High quality mode is not implemented for now.")
 
     qlr = BrotherQLRaster(configuration.printer.model)
-    create_label(
+    convert(
         qlr,
-        image,
+        [image],
         parameters.label_size,
         red=red,
         threshold=parameters.threshold,
