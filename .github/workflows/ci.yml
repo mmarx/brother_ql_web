@@ -48,6 +48,6 @@ jobs:
       - name: run black
         run: black --check --diff .
       - name: run mypy
-        run: mypy --disable-error-code=import-untyped brother_ql_web/ tests/
+        run: mypy --disable-error-code=unused-ignore --disable-error-code=import-untyped brother_ql_web/ tests/
       - name: codespell
         run: codespell --skip "*.min.js*,*.min.css*" * .github

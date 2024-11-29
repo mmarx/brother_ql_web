@@ -60,7 +60,7 @@ def _has_fontra() -> bool:
 
 def _get_fonts_using_fontra(folder: str | None = None) -> dict[str, dict[str, str]]:
     from pathlib import Path
-    import fontra
+    import fontra  # type: ignore
 
     if folder:
         fontra.FONTDIRS_CUSTOM.append(Path(folder))
