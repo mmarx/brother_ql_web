@@ -1,63 +1,53 @@
 name: CI
 
 on:
-- push
-- pull_request
-- workflow_dispatch
+  - push
+  - pull_request
+  - workflow_dispatch
 
 jobs:
   main:
     strategy:
       matrix:
         include:
-        - python: '3.9'
-        - python: '3.10'
-        - python: '3.11'
-        - python: '3.12'
-        - python: '3.13'
+          - python: "3.9"
+          - python: "3.10"
+          - python: "3.11"
+          - python: "3.12"
+          - python: "3.13"
     runs-on: ubuntu-latest
     name: Python ${{ matrix.python }}
     steps:
-    - uses: actions/checkout@v4
-    - name: set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python }}
-    - name: apt update
-      run:
-        sudo apt-get update
-    - name: install APT dependencies
-      run:
-        sudo apt-get install fonts-roboto
-    - name: update PIP
-      run:
-        python -m pip install --upgrade pip
-    - name: install wheel
-      run:
-        python -m pip install --upgrade wheel
-    - name: install package
-      run:
-        python -m pip install .[dev,mypy]
-    - name: run tests with fontconfig
-      run: |
-        python -c "from brother_ql_web.font_helpers import _has_fontra; assert not _has_fontra()"
-        python -m unittest discover --verbose --start-directory tests
-    - name: install fontra
-      run:
-        python -m pip install .[fontra]
-    - name: run tests with fontra
-      run: |
-        python -c "from brother_ql_web.font_helpers import _has_fontra; assert _has_fontra()"
-        python -m unittest discover --verbose --start-directory tests
-    - name: run flake8
-      run:
-        python -m flake8
-    - name: run black
-      run:
-        black --check --diff .
-    - name: run mypy
-      run:
-        mypy brother_ql_web/ tests/
-    - name: codespell
-      run:
-        codespell --skip "*.min.js*,*.min.css*" * .github
+      - uses: actions/checkout@v4
+      - name: set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: apt update
+        run: sudo apt-get update
+      - name: install APT dependencies
+        run: sudo apt-get install fonts-roboto python3-pylibdmtx
+      - name: update PIP
+        run: python -m pip install --upgrade pip
+      - name: install wheel
+        run: python -m pip install --upgrade wheel
+      - name: install package
+        run: python -m pip install .[dev,mypy]
+      - name: run tests with fontconfig
+        run: |
+          python -c "from brother_ql_web.font_helpers import _has_fontra; assert not _has_fontra()"
+          python -m unittest discover --verbose --start-directory tests
+      - name: install fontra
+        run: python -m pip install .[fontra]
+      - name: run tests with fontra
+        run: |
+          python -c "from brother_ql_web.font_helpers import _has_fontra; assert _has_fontra()"
+          python -m unittest discover --verbose --start-directory tests
+      - name: run flake8
+        run: python -m flake8
+      - name: run black
+        run: black --check --diff .
+      - name: run mypy
+        run: mypy brother_ql_web/ tests/
+      - name: codespell
+        run: codespell --skip "*.min.js*,*.min.css*" * .github
